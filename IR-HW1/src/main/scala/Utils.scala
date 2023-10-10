@@ -2,6 +2,13 @@ import org.json4s.DefaultFormats
 import org.json4s.jackson.Serialization
 
 object Utils {
+  def cleanSentence(sentence: String): String = {
+    sentence
+      .replaceAll("<H2>", "")
+      .replaceAll("<H2/>", "")
+      .replaceAll("[^a-zA-Z\\s]+", " ")
+  }
+
 
   def convertToJson(wordDocInfos: Iterator[WordDocumentInfo]): Iterator[String] = {
     implicit val formats: DefaultFormats.type = DefaultFormats

@@ -11,11 +11,12 @@ object IndexOperations {
     filesRDD.zipWithIndex.map(item => item._1._1.stripPrefix("file:/") + "," + (item._2 + 1))
       .coalesce(1).saveAsTextFile("src/main/resources/outputs/mapping")
 
-    val wordPositions = filesRDD.zipWithIndex.map(t => (t._2.toInt + 1, t._1._2)).flatMap(x => {
-      x._2.split("\\s+").zipWithIndex
-        .filter(wordPerIndex => wordPerIndex._1.length >= 3 && !getStopWords.contains(wordPerIndex._1.toLowerCase))
-        .map(wordPerIndex => ((x._1, wordPerIndex._1.toLowerCase), List(wordPerIndex._2 + 1)))
-    }).reduceByKey((list1, list2) => list1 ++ list2).sortBy(t => t._1._1)
+    val wordPositions = filesRDD.zipWithIndex.map(t => (t._2.toInt + 1, t._1._2))
+      .flatMap(x =>
+        Utils.cleanSentence(x._2).split("\\s+").zipWithIndex
+          .filter(wordPerIndex => wordPerIndex._1.length >= 3 && !getStopWords.contains(wordPerIndex._1.toLowerCase))
+          .map(wordPerIndex => ((x._1, wordPerIndex._1.toLowerCase), List(wordPerIndex._2 + 1)))
+      ).reduceByKey((list1, list2) => list1 ++ list2).sortBy(t => t._1._1)
 
     wordPositions.persist(StorageLevel.MEMORY_AND_DISK)
 
@@ -35,7 +36,7 @@ object IndexOperations {
 
     val wordPositions = newDocument
       .flatMap(line =>
-        line.split("\\s+").zipWithIndex
+        Utils.cleanSentence(line).split("\\s+").zipWithIndex
           .filter(t => t._1.length >= 3 && !getStopWords.contains(t._1.toLowerCase))
           .groupBy(t => t._1.toLowerCase())
           .map(t => (t._1, (1, Map(docId -> t._2.map(pos => pos._2 + 1).toList))))
