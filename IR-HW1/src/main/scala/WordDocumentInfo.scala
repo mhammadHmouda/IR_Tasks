@@ -1,0 +1,1 @@
+case class WordDocumentInfo(word: String, docCount: Int, docPositions: Map[Int, List[Int]])
