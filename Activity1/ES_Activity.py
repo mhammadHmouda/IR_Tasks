@@ -36,7 +36,7 @@ def create_index(es, index_name):
                     }
                 },
                 "analyzer": {
-                    "text_processing": {
+                    "text_processing": {-
                         "type": "custom",
                         "tokenizer": "standard",
                         "filter": [

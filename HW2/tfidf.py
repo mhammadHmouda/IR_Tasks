@@ -17,7 +17,7 @@ class DocumentSearchEngine:
 
         english_stop_words = stopwords.words('english')
         self.pipeline = Pipeline([
-            ('count', CountVectorizer(lowercase=True, stop_words=english_stop_words, min_df=2, max_features=10)),
+            ('count', CountVectorizer(lowercase=True, stop_words=english_stop_words, min_df=1, max_features=15)),
             ('tfidf', TfidfTransformer())
         ])
 
@@ -88,8 +88,8 @@ def main():
 
     engine = DocumentSearchEngine(folder_path)
 
-    top_k_query1 = engine.search_top_k(query1, k=5)
-    top_k_query2 = engine.search_top_k(query2, k=5)
+    top_k_query1 = engine.search_top_k(query1, k=3)
+    top_k_query2 = engine.search_top_k(query2, k=2)
 
     engine.print_result(top_k_query1, query1)
     engine.print_result(top_k_query2, query2)
